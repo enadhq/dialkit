@@ -15,9 +15,7 @@ export interface CreateDialOptions {
   onAction?: (action: string) => void;
 }
 
-export interface DialKitValues<T> {
-  readonly current: T;
-}
+export type DialKitValues<T> = T;
 
 let dialKitInstance = 0;
 
@@ -50,9 +48,7 @@ export function createDialKit<T extends DialConfig>(
     };
   });
 
-  return {
-    get current() { return values; },
-  };
+  return values;
 }
 
 function buildResolvedValues(

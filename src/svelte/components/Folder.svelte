@@ -2,16 +2,22 @@
   import { Spring } from 'svelte/motion';
   import { slide } from 'svelte/transition';
 
+  import type { Snippet } from 'svelte';
+
   let {
     title,
     defaultOpen = true,
     isRoot = false,
     onOpenChange,
+    toolbar,
+    children,
   } = $props<{
     title: string;
     defaultOpen?: boolean;
     isRoot?: boolean;
     onOpenChange?: (isOpen: boolean) => void;
+    toolbar?: Snippet;
+    children?: Snippet;
   }>();
 
   let isOpen = $state(defaultOpen);
@@ -125,7 +131,7 @@
 
         {#if isOpen}
           <div class="dialkit-panel-toolbar" onclick={(e) => e.stopPropagation()}>
-            <slot name="toolbar" />
+            {#if toolbar}{@render toolbar()}{/if}
           </div>
         {/if}
       </div>
@@ -133,7 +139,7 @@
       {#if isOpen}
         <div class="dialkit-folder-content">
           <div class="dialkit-folder-inner">
-            <slot />
+            {#if children}{@render children()}{/if}
           </div>
         </div>
       {/if}
@@ -165,7 +171,7 @@
     {#if isOpen}
       <div class="dialkit-folder-content" style="clip-path: inset(0 -20px);" transition:slide={{ duration: 220 }}>
         <div class="dialkit-folder-inner">
-          <slot />
+          {#if children}{@render children()}{/if}
         </div>
       </div>
     {/if}

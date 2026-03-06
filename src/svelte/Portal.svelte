@@ -1,5 +1,7 @@
 <script lang="ts">
-  let { target = 'body' } = $props<{ target?: string | HTMLElement | null }>();
+  import type { Snippet } from 'svelte';
+
+  let { target = 'body', children } = $props<{ target?: string | HTMLElement | null; children?: Snippet }>();
 
   let portalEl: HTMLDivElement | undefined;
 
@@ -24,5 +26,5 @@
 </script>
 
 <div bind:this={portalEl} style="display: contents;">
-  <slot />
+  {#if children}{@render children()}{/if}
 </div>

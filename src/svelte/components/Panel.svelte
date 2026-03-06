@@ -72,7 +72,7 @@
 
 <div class="dialkit-panel-wrapper">
   <Folder title={panel.name} {defaultOpen} isRoot={true} onOpenChange={(open) => (isPanelOpen = open)}>
-    <svelte:fragment slot="toolbar">
+    {#snippet toolbar()}
       <button
         class="dialkit-toolbar-add"
         onclick={handleAddPreset}
@@ -135,7 +135,7 @@
         </span>
         Copy
       </button>
-    </svelte:fragment>
+    {/snippet}
 
     {#each panel.controls as control (control.path)}
       <ControlRenderer panelId={panel.id} {control} {values} />

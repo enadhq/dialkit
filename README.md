@@ -392,9 +392,10 @@ npm install dialkit
 <!-- +layout.svelte -->
 <script>
   import { DialRoot } from 'dialkit/svelte';
+  let { children } = $props();
 </script>
 
-<slot />
+{@render children()}
 <DialRoot />
 ```
 
@@ -411,12 +412,12 @@ npm install dialkit
   });
 </script>
 
-<div style:filter={`blur(${params.current.blur}px)`} style:color={params.current.color}>
+<div style:filter={`blur(${params.blur}px)`} style:color={params.color}>
   ...
 </div>
 ```
 
-`createDialKit` returns a reactive object — access values via `params.current`. Styles are injected automatically by `DialRoot` (no CSS import needed). Cleanup is automatic when the component unmounts. All control types, presets, folders, and transitions match the React/Solid entries.
+`createDialKit` returns a reactive object — access values directly (e.g. `params.blur`). Styles are injected automatically by `DialRoot` (no CSS import needed). Cleanup is automatic when the component unmounts. All control types, presets, folders, and transitions match the React/Solid entries.
 
 ---
 
