@@ -6,11 +6,15 @@
   import Panel from './Panel.svelte';
 
   export type DialPosition = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
+  export type DialMode = 'popover' | 'inline';
 
-  let { position = 'top-right', defaultOpen = true } = $props<{
+  let { position = 'top-right', defaultOpen = true, mode = 'popover' } = $props<{
     position?: DialPosition;
     defaultOpen?: boolean;
+    mode?: DialMode;
   }>();
+
+  const inline = $derived(mode === 'inline');
 
   let panels = $state<PanelConfig[]>([]);
   let mounted = $state(false);
@@ -41,13 +45,21 @@
 </script>
 
 {#if mounted && panels.length > 0}
-  <Portal target="body">
-    <div class="dialkit-root">
-      <div class="dialkit-panel" data-position={position}>
+  {#snippet content()}
+    <div class="dialkit-root" data-mode={mode}>
+      <div class="dialkit-panel" data-mode={mode} data-position={inline ? undefined : position}>
         {#each panels as panel (panel.id)}
-          <Panel {panel} {defaultOpen} />
+          <Panel {panel} defaultOpen={inline || defaultOpen} {inline} />
         {/each}
       </div>
     </div>
-  </Portal>
+  {/snippet}
+
+  {#if inline}
+    {@render content()}
+  {:else}
+    <Portal target="body">
+      {@render content()}
+    </Portal>
+  {/if}
 {/if}

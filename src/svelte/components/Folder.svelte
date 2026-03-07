@@ -8,6 +8,7 @@
     title,
     defaultOpen = true,
     isRoot = false,
+    inline = false,
     onOpenChange,
     toolbar,
     children,
@@ -15,6 +16,7 @@
     title: string;
     defaultOpen?: boolean;
     isRoot?: boolean;
+    inline?: boolean;
     onOpenChange?: (isOpen: boolean) => void;
     toolbar?: Snippet;
     children?: Snippet;
@@ -71,6 +73,7 @@
   });
 
   const handleToggle = () => {
+    if (inline && isRoot) return;
     const next = !isOpen;
     isOpen = next;
     isCollapsed = !next;
@@ -96,7 +99,29 @@
   );
 </script>
 
-{#if isRoot}
+{#if isRoot && inline}
+  <div class="dialkit-panel-inner dialkit-panel-inline">
+    <div bind:this={contentRef} class="dialkit-folder dialkit-folder-root">
+      <div class="dialkit-folder-header dialkit-panel-header" onclick={(e) => { e.stopPropagation(); handleToggle(); }}>
+        <div class="dialkit-folder-header-top">
+          <div class="dialkit-folder-title-row">
+            <span class="dialkit-folder-title dialkit-folder-title-root">{title}</span>
+          </div>
+        </div>
+
+        <div class="dialkit-panel-toolbar" onclick={(e) => e.stopPropagation()}>
+          {#if toolbar}{@render toolbar()}{/if}
+        </div>
+      </div>
+
+      <div class="dialkit-folder-content">
+        <div class="dialkit-folder-inner">
+          {#if children}{@render children()}{/if}
+        </div>
+      </div>
+    </div>
+  </div>
+{:else if isRoot}
   <div
     bind:this={panelRef}
     class="dialkit-panel-inner"

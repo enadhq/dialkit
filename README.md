@@ -262,10 +262,25 @@ Mount once at your app root. In the default `popover` mode, the panel renders vi
 
 ### Inline mode
 
-Use `mode="inline"` to render DialKit directly in your layout instead of as a floating popover. The panel fills its container and scrolls internally, which is useful for embedding in a sidebar or resizable panel:
+Use `mode="inline"` to render DialKit directly in your layout instead of as a floating popover. The panel fills its container and scrolls internally, which is useful for embedding in a sidebar or resizable panel. Inline mode works across all frameworks:
 
+**React:**
 ```tsx
 <aside style={{ width: 300, height: '100vh', overflow: 'hidden' }}>
+  <DialRoot mode="inline" />
+</aside>
+```
+
+**Solid:**
+```tsx
+<aside style={{ width: '300px', height: '100vh', overflow: 'hidden' }}>
+  <DialRoot mode="inline" />
+</aside>
+```
+
+**Svelte:**
+```svelte
+<aside style:width="300px" style:height="100vh" style:overflow="hidden">
   <DialRoot mode="inline" />
 </aside>
 ```

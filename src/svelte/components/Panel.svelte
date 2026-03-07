@@ -6,7 +6,7 @@
   import PresetManager from './PresetManager.svelte';
   import ControlRenderer from './ControlRenderer.svelte';
 
-  let { panel, defaultOpen = true } = $props<{ panel: PanelConfig; defaultOpen?: boolean }>();
+  let { panel, defaultOpen = true, inline = false } = $props<{ panel: PanelConfig; defaultOpen?: boolean; inline?: boolean }>();
 
   let copied = $state(false);
   let isPanelOpen = $state(defaultOpen);
@@ -71,7 +71,7 @@
 </script>
 
 <div class="dialkit-panel-wrapper">
-  <Folder title={panel.name} {defaultOpen} isRoot={true} onOpenChange={(open) => (isPanelOpen = open)}>
+  <Folder title={panel.name} {defaultOpen} isRoot={true} {inline} onOpenChange={(open) => (isPanelOpen = open)}>
     {#snippet toolbar()}
       <button
         class="dialkit-toolbar-add"
