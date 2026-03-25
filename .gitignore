@@ -1,8 +1,7 @@
 # Dependencies
 node_modules/
 
-# Build output (regenerated on install)
-dist/
+# Build output
 .svelte-kit/
 
 # Generated artifacts from svelte-package
