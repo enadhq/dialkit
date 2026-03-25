@@ -1654,10 +1654,20 @@ function ColorControl({ label, value, onChange }) {
   const [ready, setReady] = (0, import_react12.useState)(false);
   const containerRef = (0, import_react12.useRef)(null);
   const colorInputRef = (0, import_react12.useRef)(null);
+  const internalChange = (0, import_react12.useRef)(false);
   const theme = useDetectTheme(containerRef);
   (0, import_react12.useEffect)(() => {
     import("hdr-color-input").then(() => setReady(true));
   }, []);
+  (0, import_react12.useEffect)(() => {
+    const el = colorInputRef.current;
+    if (!el || !ready) return;
+    if (internalChange.current) {
+      internalChange.current = false;
+      return;
+    }
+    el.value = value;
+  }, [value, ready]);
   (0, import_react12.useEffect)(() => {
     if (!isEditing) {
       setEditValue(value);
@@ -1666,12 +1676,13 @@ function ColorControl({ label, value, onChange }) {
   const handleChange = (0, import_react12.useCallback)((e) => {
     const detail = e.detail;
     if (detail?.value) {
+      internalChange.current = true;
       onChange(detail.value);
     }
   }, [onChange]);
   (0, import_react12.useEffect)(() => {
     const el = colorInputRef.current;
-    if (!el) return;
+    if (!el || !ready) return;
     el.addEventListener("change", handleChange);
     return () => el.removeEventListener("change", handleChange);
   }, [handleChange, ready]);
@@ -1734,7 +1745,6 @@ function ColorControl({ label, value, onChange }) {
         "color-input",
         {
           ref: colorInputRef,
-          value,
           theme,
           "no-alpha": true,
           className: "dialkit-color-picker-hdr"

@@ -1605,10 +1605,20 @@ function ColorControl({ label, value, onChange }) {
   const [ready, setReady] = useState6(false);
   const containerRef = useRef6(null);
   const colorInputRef = useRef6(null);
+  const internalChange = useRef6(false);
   const theme = useDetectTheme(containerRef);
   useEffect5(() => {
     import("hdr-color-input").then(() => setReady(true));
   }, []);
+  useEffect5(() => {
+    const el = colorInputRef.current;
+    if (!el || !ready) return;
+    if (internalChange.current) {
+      internalChange.current = false;
+      return;
+    }
+    el.value = value;
+  }, [value, ready]);
   useEffect5(() => {
     if (!isEditing) {
       setEditValue(value);
@@ -1617,12 +1627,13 @@ function ColorControl({ label, value, onChange }) {
   const handleChange = useCallback3((e) => {
     const detail = e.detail;
     if (detail?.value) {
+      internalChange.current = true;
       onChange(detail.value);
     }
   }, [onChange]);
   useEffect5(() => {
     const el = colorInputRef.current;
-    if (!el) return;
+    if (!el || !ready) return;
     el.addEventListener("change", handleChange);
     return () => el.removeEventListener("change", handleChange);
   }, [handleChange, ready]);
@@ -1685,7 +1696,6 @@ function ColorControl({ label, value, onChange }) {
         "color-input",
         {
           ref: colorInputRef,
-          value,
           theme,
           "no-alpha": true,
           className: "dialkit-color-picker-hdr"

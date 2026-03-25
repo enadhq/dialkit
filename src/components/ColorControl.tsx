@@ -27,11 +27,23 @@ export function ColorControl({ label, value, onChange }: ColorControlProps) {
   const [ready, setReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const colorInputRef = useRef<HTMLElement>(null);
+  const internalChange = useRef(false);
   const theme = useDetectTheme(containerRef);
 
   useEffect(() => {
     import('hdr-color-input').then(() => setReady(true));
   }, []);
+
+  // Sync parent value to the element via property, skip if user-initiated
+  useEffect(() => {
+    const el = colorInputRef.current;
+    if (!el || !ready) return;
+    if (internalChange.current) {
+      internalChange.current = false;
+      return;
+    }
+    (el as any).value = value;
+  }, [value, ready]);
 
   useEffect(() => {
     if (!isEditing) {
@@ -42,13 +54,14 @@ export function ColorControl({ label, value, onChange }: ColorControlProps) {
   const handleChange = useCallback((e: Event) => {
     const detail = (e as CustomEvent).detail;
     if (detail?.value) {
+      internalChange.current = true;
       onChange(detail.value);
     }
   }, [onChange]);
 
   useEffect(() => {
     const el = colorInputRef.current;
-    if (!el) return;
+    if (!el || !ready) return;
     el.addEventListener('change', handleChange);
     return () => el.removeEventListener('change', handleChange);
   }, [handleChange, ready]);
@@ -110,7 +123,6 @@ export function ColorControl({ label, value, onChange }: ColorControlProps) {
         />
         <color-input
           ref={colorInputRef}
-          value={value}
           theme={theme}
           no-alpha
           className="dialkit-color-picker-hdr"
