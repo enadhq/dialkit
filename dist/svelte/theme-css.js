@@ -832,6 +832,7 @@ export const themeCSS = `/* Dialkit Theme - Dark glassmorphic design */
   display: flex;
   align-items: center;
   gap: 8px;
+  position: relative;
 }
 
 .dialkit-color-hex {
@@ -876,9 +877,17 @@ export const themeCSS = `/* Dialkit Theme - Dark glassmorphic design */
 
 .dialkit-color-picker-hdr {
   position: absolute;
+  right: 0;
+  top: 100%;
   width: 0;
   height: 0;
   overflow: visible;
+  pointer-events: none;
+}
+
+.dialkit-color-picker-hdr:popover-open,
+.dialkit-color-picker-hdr [popover]:popover-open {
+  pointer-events: auto;
 }
 
 /* Preset Manager */
