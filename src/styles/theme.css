@@ -831,6 +831,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  position: relative;
 }
 
 .dialkit-color-hex {
@@ -873,12 +874,17 @@
   transform: scale(1.1);
 }
 
-.dialkit-color-picker-native {
+.dialkit-color-picker-hdr {
   position: absolute;
-  width: 0;
-  height: 0;
+  width: 1px;
+  height: 1px;
   opacity: 0;
-  pointer-events: none;
+  overflow: visible;
+}
+
+.dialkit-color-picker-hdr:popover-open,
+.dialkit-color-picker-hdr [popover]:popover-open {
+  pointer-events: auto;
 }
 
 /* Preset Manager */

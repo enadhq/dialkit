@@ -19,7 +19,8 @@
     "src/index.ts",
     "src/components/**/*",
     "src/hooks/**/*",
-    "src/store/**/*"
+    "src/store/**/*",
+    "src/*.d.ts"
   ],
   "exclude": ["node_modules", "dist", "example"]
 }
