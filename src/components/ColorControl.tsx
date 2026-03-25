@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
+import 'hdr-color-input';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 interface ColorControlProps {
   label: string;
@@ -8,17 +9,45 @@ interface ColorControlProps {
 
 const HEX_COLOR_REGEX = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/;
 
+function useDetectTheme(ref: React.RefObject<HTMLElement | null>): 'light' | 'dark' {
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const isLight = !!el.closest('.dial-panel-light');
+    setTheme(isLight ? 'light' : 'dark');
+  }, [ref]);
+
+  return theme;
+}
+
 export function ColorControl({ label, value, onChange }: ColorControlProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value);
-  const colorInputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const colorInputRef = useRef<HTMLElement>(null);
+  const theme = useDetectTheme(containerRef);
 
-  // Sync editValue when value changes externally
   useEffect(() => {
     if (!isEditing) {
       setEditValue(value);
     }
   }, [value, isEditing]);
+
+  const handleChange = useCallback((e: Event) => {
+    const detail = (e as CustomEvent).detail;
+    if (detail?.value) {
+      onChange(detail.value);
+    }
+  }, [onChange]);
+
+  useEffect(() => {
+    const el = colorInputRef.current;
+    if (!el) return;
+    el.addEventListener('change', handleChange);
+    return () => el.removeEventListener('change', handleChange);
+  }, [handleChange]);
 
   function handleTextSubmit() {
     setIsEditing(false);
@@ -38,8 +67,17 @@ export function ColorControl({ label, value, onChange }: ColorControlProps) {
     }
   }
 
+  function handleSwatchClick() {
+    const el = colorInputRef.current as any;
+    if (el?.showPicker) {
+      el.showPicker();
+    } else if (el?.show) {
+      el.show();
+    }
+  }
+
   return (
-    <div className="dialkit-color-control">
+    <div className="dialkit-color-control" ref={containerRef}>
       <span className="dialkit-color-label">{label}</span>
       <div className="dialkit-color-inputs">
         {isEditing ? (
@@ -63,22 +101,17 @@ export function ColorControl({ label, value, onChange }: ColorControlProps) {
         <button
           className="dialkit-color-swatch"
           style={{ backgroundColor: value }}
-          onClick={() => colorInputRef.current?.click()}
+          onClick={handleSwatchClick}
           title="Pick color"
         />
-        <input
+        <color-input
           ref={colorInputRef}
-          type="color"
-          className="dialkit-color-picker-native"
-          value={value.length === 4 ? expandShorthandHex(value) : value.slice(0, 7)}
-          onChange={(e) => onChange(e.target.value)}
+          value={value}
+          theme={theme}
+          no-alpha
+          className="dialkit-color-picker-hdr"
         />
       </div>
     </div>
   );
-}
-
-function expandShorthandHex(hex: string): string {
-  if (hex.length !== 4) return hex;
-  return `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}`;
 }
