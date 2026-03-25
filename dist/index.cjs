@@ -1,8 +1,10 @@
 "use client";
 "use strict";
+var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __export = (target, all) => {
   for (var name in all)
@@ -16,6 +18,14 @@ var __copyProps = (to, from, except, desc) => {
   }
   return to;
 };
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // src/index.ts
@@ -1625,7 +1635,6 @@ function SelectControl({ label, value, options, onChange }) {
 }
 
 // src/components/ColorControl.tsx
-var import_hdr_color_input = require("hdr-color-input");
 var import_react12 = require("react");
 var import_jsx_runtime11 = require("react/jsx-runtime");
 var HEX_COLOR_REGEX = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/;
@@ -1642,9 +1651,13 @@ function useDetectTheme(ref) {
 function ColorControl({ label, value, onChange }) {
   const [isEditing, setIsEditing] = (0, import_react12.useState)(false);
   const [editValue, setEditValue] = (0, import_react12.useState)(value);
+  const [ready, setReady] = (0, import_react12.useState)(false);
   const containerRef = (0, import_react12.useRef)(null);
   const colorInputRef = (0, import_react12.useRef)(null);
   const theme = useDetectTheme(containerRef);
+  (0, import_react12.useEffect)(() => {
+    import("hdr-color-input").then(() => setReady(true));
+  }, []);
   (0, import_react12.useEffect)(() => {
     if (!isEditing) {
       setEditValue(value);
@@ -1661,7 +1674,7 @@ function ColorControl({ label, value, onChange }) {
     if (!el) return;
     el.addEventListener("change", handleChange);
     return () => el.removeEventListener("change", handleChange);
-  }, [handleChange]);
+  }, [handleChange, ready]);
   function handleTextSubmit() {
     setIsEditing(false);
     if (HEX_COLOR_REGEX.test(editValue)) {

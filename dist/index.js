@@ -1586,7 +1586,6 @@ function SelectControl({ label, value, options, onChange }) {
 }
 
 // src/components/ColorControl.tsx
-import "hdr-color-input";
 import { useState as useState6, useRef as useRef6, useEffect as useEffect5, useCallback as useCallback3 } from "react";
 import { jsx as jsx11, jsxs as jsxs11 } from "react/jsx-runtime";
 var HEX_COLOR_REGEX = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/;
@@ -1603,9 +1602,13 @@ function useDetectTheme(ref) {
 function ColorControl({ label, value, onChange }) {
   const [isEditing, setIsEditing] = useState6(false);
   const [editValue, setEditValue] = useState6(value);
+  const [ready, setReady] = useState6(false);
   const containerRef = useRef6(null);
   const colorInputRef = useRef6(null);
   const theme = useDetectTheme(containerRef);
+  useEffect5(() => {
+    import("hdr-color-input").then(() => setReady(true));
+  }, []);
   useEffect5(() => {
     if (!isEditing) {
       setEditValue(value);
@@ -1622,7 +1625,7 @@ function ColorControl({ label, value, onChange }) {
     if (!el) return;
     el.addEventListener("change", handleChange);
     return () => el.removeEventListener("change", handleChange);
-  }, [handleChange]);
+  }, [handleChange, ready]);
   function handleTextSubmit() {
     setIsEditing(false);
     if (HEX_COLOR_REGEX.test(editValue)) {

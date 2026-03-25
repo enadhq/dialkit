@@ -1,4 +1,3 @@
-import 'hdr-color-input';
 import { useState, useRef, useEffect, useCallback } from 'react';
 
 interface ColorControlProps {
@@ -25,9 +24,14 @@ function useDetectTheme(ref: React.RefObject<HTMLElement | null>): 'light' | 'da
 export function ColorControl({ label, value, onChange }: ColorControlProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value);
+  const [ready, setReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const colorInputRef = useRef<HTMLElement>(null);
   const theme = useDetectTheme(containerRef);
+
+  useEffect(() => {
+    import('hdr-color-input').then(() => setReady(true));
+  }, []);
 
   useEffect(() => {
     if (!isEditing) {
@@ -47,7 +51,7 @@ export function ColorControl({ label, value, onChange }: ColorControlProps) {
     if (!el) return;
     el.addEventListener('change', handleChange);
     return () => el.removeEventListener('change', handleChange);
-  }, [handleChange]);
+  }, [handleChange, ready]);
 
   function handleTextSubmit() {
     setIsEditing(false);
