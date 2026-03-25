@@ -1605,6 +1605,7 @@ function ColorControl({ label, value, onChange }) {
   const [ready, setReady] = useState6(false);
   const containerRef = useRef6(null);
   const colorInputRef = useRef6(null);
+  const swatchRef = useRef6(null);
   const internalChange = useRef6(false);
   const theme = useDetectTheme(containerRef);
   useEffect5(() => {
@@ -1655,10 +1656,12 @@ function ColorControl({ label, value, onChange }) {
   }
   function handleSwatchClick() {
     const el = colorInputRef.current;
-    if (el?.showPicker) {
+    const anchor = swatchRef.current;
+    if (!el || !ready) return;
+    if (el.show) {
+      el.show(anchor);
+    } else if (el.showPicker) {
       el.showPicker();
-    } else if (el?.show) {
-      el.show();
     }
   }
   return /* @__PURE__ */ jsxs11("div", { className: "dialkit-color-control", ref: containerRef, children: [
@@ -1686,6 +1689,7 @@ function ColorControl({ label, value, onChange }) {
       /* @__PURE__ */ jsx11(
         "button",
         {
+          ref: swatchRef,
           className: "dialkit-color-swatch",
           style: { backgroundColor: value },
           onClick: handleSwatchClick,

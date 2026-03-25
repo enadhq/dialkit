@@ -27,6 +27,7 @@ export function ColorControl({ label, value, onChange }: ColorControlProps) {
   const [ready, setReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const colorInputRef = useRef<HTMLElement>(null);
+  const swatchRef = useRef<HTMLButtonElement>(null);
   const internalChange = useRef(false);
   const theme = useDetectTheme(containerRef);
 
@@ -34,7 +35,6 @@ export function ColorControl({ label, value, onChange }: ColorControlProps) {
     import('hdr-color-input').then(() => setReady(true));
   }, []);
 
-  // Sync parent value to the element via property, skip if user-initiated
   useEffect(() => {
     const el = colorInputRef.current;
     if (!el || !ready) return;
@@ -86,10 +86,12 @@ export function ColorControl({ label, value, onChange }: ColorControlProps) {
 
   function handleSwatchClick() {
     const el = colorInputRef.current as any;
-    if (el?.showPicker) {
+    const anchor = swatchRef.current;
+    if (!el || !ready) return;
+    if (el.show) {
+      el.show(anchor);
+    } else if (el.showPicker) {
       el.showPicker();
-    } else if (el?.show) {
-      el.show();
     }
   }
 
@@ -116,6 +118,7 @@ export function ColorControl({ label, value, onChange }: ColorControlProps) {
           </span>
         )}
         <button
+          ref={swatchRef}
           className="dialkit-color-swatch"
           style={{ backgroundColor: value }}
           onClick={handleSwatchClick}

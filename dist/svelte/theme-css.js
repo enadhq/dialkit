@@ -877,12 +877,10 @@ export const themeCSS = `/* Dialkit Theme - Dark glassmorphic design */
 
 .dialkit-color-picker-hdr {
   position: absolute;
-  right: 0;
-  top: 100%;
-  width: 0;
-  height: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
   overflow: visible;
-  pointer-events: none;
 }
 
 .dialkit-color-picker-hdr:popover-open,
